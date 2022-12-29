@@ -186,9 +186,15 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
             let screenRatio = screenSize().width / screenSize().height
 
             if picRatio > screenRatio {
-                return CGSize(width: screenSize().width, height: screenSize().width / picSize.width * picSize.height)
+                ///
+                /// A fix to dividing by 0 causing the excpetion: CALayerInvalidGeometry, CALAyer position contains NaN
+                ///     MF-3331
+                ///
+                let picWidth = picSize.width <= 0 ? picSize.height : picSize.width
+                return CGSize(width: screenSize().width, height: screenSize().width / picWidth * picSize.height)
             } else {
-                return CGSize(width: screenSize().height / picSize.height * picSize.width, height: screenSize().height)
+                let picHeight = picSize.height <= 0 ? picSize.width : picSize.height
+                return CGSize(width: screenSize().height / picHeight * picSize.width, height: screenSize().height)
             }
         } else {
             return CGSize(width: screenSize().width, height: screenSize().height)
